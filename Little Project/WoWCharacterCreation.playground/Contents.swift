@@ -11,11 +11,13 @@ enum Classes: Int {
     case Monk
     case DemonHunter
     case DeathKnight
+    case Default
 }
 
 enum Faction {
     case Horde
     case Alliance
+    case Default
 }
 
 enum HordeRace {
@@ -25,6 +27,7 @@ enum HordeRace {
     case Troll
     case BloodElf
     case Goblin
+    case Default
 }
 
 enum AllianceRace {
@@ -34,33 +37,48 @@ enum AllianceRace {
     case Gnome
     case Draenai
     case Worgen
+    case Default
 }
 
-struct CharacterHCreation {
+class CreateCharacter {
+    //variables:
     var characterName: String
     var characterFaction: Faction
-    var characterHRace: HordeRace
+    var characterHRace: HordeRace?
+    var characterARace: AllianceRace?
     var characterClass: Classes
     
+    //initialise
+    init() {
+        characterName = "Default Name"
+        characterFaction = Faction.Default
+        characterHRace = HordeRace.Default
+        characterARace = AllianceRace.Default
+        characterClass = Classes.Default
+    }
+    //method
+    
     func readDescription(){
-        print("You created: \(characterHRace) \(characterClass) with the name of \(characterName)")
-        print("For the HORDE!")
+        if self.characterARace == AllianceRace.Default{
+            print("You created: \(self.characterHRace!) \(self.characterClass) with the name of \(self.characterName)")
+            print("For the horde!")
+        } else {
+            print("You created: \(self.characterARace!) \(self.characterClass) with the name of \(self.characterName)")
+            print("For the alliance!")
+        }
     }
 }
 
-struct CharacterACreation {
-    var characterName: String
-    var characterFaction: Faction
-    var characterHRace: HordeRace
-    var characterClass: Classes
-    
-    func readDescription(){
-        print("You created: \(characterHRace) \(characterClass) with the name of \(characterName)")
-        print("For the ALLIANCE!")
-    }
-}
-
-var jackson = CharacterHCreation(characterName: "Jeranbi", characterFaction: Faction.Horde, characterHRace: HordeRace.Troll, characterClass: Classes.Paladin)
-
+var jackson = CreateCharacter.init()
+jackson.characterClass = Classes.Monk
+jackson.characterARace = AllianceRace.Human
+jackson.characterFaction = Faction.Alliance
+jackson.characterName = "Jeranbi"
 jackson.readDescription()
 
+var angelina = CreateCharacter.init()
+angelina.characterName  = "Elpina"
+angelina.characterFaction = Faction.Alliance
+angelina.characterHRace = HordeRace.BloodElf
+angelina.characterClass = Classes.Hunter
+angelina.readDescription()
