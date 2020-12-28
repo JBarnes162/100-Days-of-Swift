@@ -12,8 +12,16 @@ struct ContentView: View {
     @State private var numberOfPeople = ""       // Nice default value that works sometimes
     @State private var tipPercentage = 2        // Using 2 because using it to select value from predetermined array
     
+    
     let tipPercentages = [10, 15, 20, 25, 0]
     
+    var useRedText: Bool{
+        if Int(tipPercentages[tipPercentage]) == 0{
+            return true
+        } else {
+            return false
+        }
+    }
     var totalPerPerson: Double {
         // calculate the total per person
         let peopleCount = Double(numberOfPeople) ?? 0
@@ -64,6 +72,7 @@ struct ContentView: View {
                 
                 Section(header: Text("Total Amount")){
                     Text("£\(finalBill, specifier: "%.2f")")
+                        .foregroundColor(useRedText == true ? .red: .black)
                 }
                 
                 Section(header: Text("Amount per person")) {
