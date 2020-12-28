@@ -7,6 +7,17 @@
 
 import SwiftUI
 
+extension Image {
+    func flagImage() -> some View {
+        self
+            .renderingMode(.original)
+            .clipShape(Capsule())
+            .overlay(Capsule().stroke(Color.black, lineWidth: 3))
+            .shadow(color: .black, radius: 2)
+   }
+}
+
+
 struct ContentView: View {
     @State private var countries = ["Estonia", "France", "Germany",
                      "Ireland", "Italy", "Nigeria",
@@ -36,10 +47,7 @@ struct ContentView: View {
                         self.flagTapped(number)
                     }) {
                         Image(self.countries[number])
-                            .renderingMode(.original)
-                            .clipShape(Capsule())
-                            .overlay(Capsule().stroke(Color.black, lineWidth: 3))
-                            .shadow(color: .black, radius: 2)
+                            .flagImage()
                     }
                 }
                 Text("Your Current score is: \(userScore)")
