@@ -38,6 +38,7 @@ struct ContentView: View {
     
     @State private var startTapped: Bool = false
     @State private var resultTitle: String = ""
+    @State private var gameOutcome: String = ""
     @State private var showingScore: Bool = false
 
     
@@ -99,7 +100,7 @@ struct ContentView: View {
                 }
             }
         .alert(isPresented: $showingScore) {
-            Alert(title: Text(resultTitle), message: Text("Player picked: \(possibleMoves[playerMove]) \n CPU Picked: \(possibleMoves[cpuMove])"), dismissButton: .default(Text("Continue")) {
+            Alert(title: Text(resultTitle), message: Text("Player picked: \(possibleMoves[playerMove]) \n CPU Picked: \(possibleMoves[cpuMove]) \n \(gameOutcome)"), dismissButton: .default(Text("Continue")) {
                 self.newRound()
             })
         }
@@ -134,16 +135,34 @@ struct ContentView: View {
             resultTitle = "ERROR"
         }
         
+        if resultTitle == "Player Wins!" && playerOutcome == 0 {
+            playerScore += 1
+            gameOutcome = "Game outcome was guessed correctly!"
+        } else {
+            playerScore -= 1
+            gameOutcome = "Game outcome was guessed incorrectly!"
+        }
+        
+        if resultTitle == "CPU Wins!" && cpuOutcome == 0 {
+            cpuScore += 1
+            gameOutcome = "Game outcome was guessed correctly!"
+        } else {
+            cpuScore -= 1
+            gameOutcome = "Game outcome was guessed incorrectly!"
+        }
+        
         if cpuMove == playerMove {
             resultTitle = "It's a draw."
         }
         
         if cpuScore == 10 {
             resultTitle = "CPU WINS!!!"
+            gameOutcome = "Game reset"
             cpuScore = 0
             playerScore = 0
         } else if playerScore == 10 {
             resultTitle = "PLAYER WINS!!!"
+            gameOutcome = "Game reset"
             cpuScore = 0
             playerScore = 0
         }
