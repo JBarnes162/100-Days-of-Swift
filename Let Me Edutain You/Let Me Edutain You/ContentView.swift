@@ -48,14 +48,12 @@ struct ContentView: View {
                                      "rhino", "sloth", "snake", "walrus",
                                      "whale", "zebra"]
     @State private var animalIcon = 17
-    
     @State private var gameState = false                            // True for Playing - False for Settings
     @State private var multplicationTable = 0                       // Which multiplication table do they want questions for
     @State private var numberOfQuestions = 1                        // How many questions do they want to answer
     @State private var studentName = "Default Name"
     @State private var question = 0
-    
-    
+
     let questions = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
     
     
@@ -106,7 +104,7 @@ struct ContentView: View {
                         
                     }
                     VStack{
-                        NavigationLink(destination: QuestionView(timesTable: questions[multplicationTable], questionAmount: numberOfQuestions)) {
+                        NavigationLink(destination: QuestionView(studentName: studentName, timesTable: questions[multplicationTable], questionAmount: numberOfQuestions)) {
                             Text("Start!")
                             .titleStyle()
                             .font(.title)
@@ -121,9 +119,12 @@ struct ContentView: View {
     
     
     struct QuestionView: View {
-        
+        @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
         @State private var multiplyBy = Int.random(in: 0...11)          // To decide what to multiply the number with
+        @State private var playerScore = 0
+        @State private var questionNumber = 25
         
+        let studentName: String
         let timesTable: Int
         let questionAmount: Int
         
@@ -131,19 +132,61 @@ struct ContentView: View {
             let answer = timesTable * multiplyBy
             return answer
         }
-        
-        var body: some View {
-            Text("Hello \(timesTable) times table, \(questionAmount) questions")
-            Text("\(correctAnswer), \(multiplyBy)")
+
+            var body: some View {
+                Group {
+                    ZStack {
+                        LinearGradient(gradient: Gradient(colors: [Color.blue]), startPoint: .topLeading, endPoint: .trailing).ignoresSafeArea()
+                        VStack {
+                            VStack{
+                                HStack {
+                                Text("Q\(questionNumber)")
+                                    .frame(width: 75, height: 40, alignment: .center)
+                                    .font(.title)
+                                    .titleStyle()
+                                
+                                    
+                                Text("What is \(multiplyBy) x \(timesTable)?")
+                                    .frame(width: 175, height: 40, alignment: .center)
+                                    .font(.title)
+                                    .titleStyle()
+                            }
+                        }
+                        .navigationBarTitle("")
+                        .navigationBarBackButtonHidden(true)
+                        .navigationBarHidden(true)
+                        
+                            Form {
+                                VStack {
+                                    Text("enter you answer: ")
+                                }
+                            }
+                            VStack(spacing: 10) {
+                                Button(action: {
+                                    
+                                }, label: {
+                                    Text("Check Answer")
+                                        .titleStyle()
+                                        .font(.title)
+                                    })
+                                }
+                        
+                    }
+                }
+            }
         }
-        
     }
+}
     
     struct HomeView: View {
             @Binding var buttonClick: Bool
 
             var body: some View {
+            ZStack {
+                LinearGradient(gradient: Gradient(colors: [Color.blue, Color.blue]), startPoint: .topLeading
+                               , endPoint: .trailing).ignoresSafeArea()
                 VStack {
+                    
                     Button(action: {
                         withAnimation {
                             self.buttonClick.toggle()
@@ -154,6 +197,29 @@ struct ContentView: View {
                 }
             }
         }
+    }
+    
+    func isCorrect(multipliedBy: Int, timesTable: Int, userAnswer: Int, score: Int) -> Int {
+        var answerOutcome = false
+        let currentScore = score
+        
+        if multipliedBy * timesTable == userAnswer {
+            answerOutcome = true
+        } else {
+            answerOutcome = false
+    }
+        return playerScore(isCorrect: answerOutcome, playerScore: currentScore)
+}
+    
+    func playerScore(isCorrect: Bool, playerScore: Int) -> Int {
+        let score = playerScore
+        
+            if isCorrect {
+                return score + 1
+            } else {
+                return score
+            }
+    }
     
 
 
@@ -162,4 +228,4 @@ struct ContentView_Previews: PreviewProvider {
         ContentView()
     }
 }
-}
+
