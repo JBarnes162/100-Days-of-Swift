@@ -53,6 +53,7 @@ struct ContentView: View {
     @State private var numberOfQuestions = 1                        // How many questions do they want to answer
     @State private var studentName = "Default Name"
     @State private var question = 0
+    @State private var playerScore = 0
 
     let questions = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
     
@@ -120,13 +121,15 @@ struct ContentView: View {
     
     struct QuestionView: View {
         @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
-        @State private var multiplyBy = Int.random(in: 0...11)          // To decide what to multiply the number with
-        @State private var playerScore = 0
-        @State private var questionNumber = 25
-        
         let studentName: String
         let timesTable: Int
         let questionAmount: Int
+        
+        @State private var multiplyBy = Int.random(in: 1...12)          // To decide what to multiply the number with
+        @State private var playerScore = 0
+        @State private var playerAnswer = 1
+        @State private var questionCounter = 1
+        @State private var showingAlert = false
         
         var correctAnswer: Int {
             let answer = timesTable * multiplyBy
@@ -134,20 +137,21 @@ struct ContentView: View {
         }
 
             var body: some View {
+                NavigationView {
                 Group {
                     ZStack {
                         LinearGradient(gradient: Gradient(colors: [Color.blue]), startPoint: .topLeading, endPoint: .trailing).ignoresSafeArea()
                         VStack {
                             VStack{
                                 HStack {
-                                Text("Q\(questionNumber)")
+                                Text("Q\(questionCounter)")
                                     .frame(width: 75, height: 40, alignment: .center)
                                     .font(.title)
                                     .titleStyle()
                                 
                                     
                                 Text("What is \(multiplyBy) x \(timesTable)?")
-                                    .frame(width: 175, height: 40, alignment: .center)
+                                    .frame(width: 200, height: 40, alignment: .center)
                                     .font(.title)
                                     .titleStyle()
                             }
@@ -158,22 +162,37 @@ struct ContentView: View {
                         
                             Form {
                                 VStack {
-                                    Text("enter you answer: ")
+                                    TextField("enter you answer: ", )
+                                }
+                                VStack {
+                                    Text("Your current score is \(questionAmount)")
                                 }
                             }
                             VStack(spacing: 10) {
                                 Button(action: {
+                                    if isCorrect(multipliedBy: multiplyBy, timesTable: timesTable, userAnswer: playerAnswer) {
+                                        playerScore += 1
+                                    }
                                     
-                                }, label: {
+                                    if (questionCounter == questionAmount){
+                                        showingAlert = true
+                                        presentationMode.wrappedValue.dismiss()
+                                    }
+                                    questionCounter += 1
+                                    multiplyBy = Int.random(in: 1...12)
+                                        }) {
                                     Text("Check Answer")
                                         .titleStyle()
                                         .font(.title)
-                                    })
+                                        }
+                                        .alert(isPresented: $showingAlert) {
+                                            Alert(title: Text("You have completed the \(timesTable) times table!"), message: Text("You scored \(playerScore)"), dismissButton: .default(Text("Got it!")))
+                                        }
                                 }
-                        
+                        }
                     }
                 }
-            }
+            }.navigationBarHidden(true)
         }
     }
 }
@@ -199,27 +218,15 @@ struct ContentView: View {
         }
     }
     
-    func isCorrect(multipliedBy: Int, timesTable: Int, userAnswer: Int, score: Int) -> Int {
-        var answerOutcome = false
-        let currentScore = score
+    func isCorrect(multipliedBy: Int, timesTable: Int, userAnswer: Int) -> Bool {
         
         if multipliedBy * timesTable == userAnswer {
-            answerOutcome = true
+            return true
         } else {
-            answerOutcome = false
+            return false
     }
-        return playerScore(isCorrect: answerOutcome, playerScore: currentScore)
 }
     
-    func playerScore(isCorrect: Bool, playerScore: Int) -> Int {
-        let score = playerScore
-        
-            if isCorrect {
-                return score + 1
-            } else {
-                return score
-            }
-    }
     
 
 
