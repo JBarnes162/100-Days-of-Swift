@@ -33,6 +33,8 @@ class Expenses: ObservableObject {
             if let decoded = try? decoder.decode([ExpenseItem].self, from: items) {
                 self.items = decoded
                 return
+            } else {
+                
             }
         }
         self.items = []
@@ -54,13 +56,14 @@ struct ContentView: View {
                         }
                         
                         Spacer()
-                        Text("£\(item.amount)")
+                        Text("$\(item.amount)")
+                            .foregroundColor(item.amount <= 100 ? .green : item.amount > 100 && item.amount < 1000 ? .orange : .red)
                     }
                 }
                 .onDelete(perform: removeItems)
             }
             .navigationBarTitle("iExpense")
-            .navigationBarItems(trailing:
+            .navigationBarItems(leading: EditButton(), trailing:
             Button(action: {
                 self.showingAddExpense = true
             }) {
