@@ -7,12 +7,6 @@
 
 import Foundation
 
-struct CrewRole: Codable {
-    let name: String
-    let role: String
-    
-}
-
 struct Mission: Codable, Identifiable {
     
     struct CrewRole: Codable {

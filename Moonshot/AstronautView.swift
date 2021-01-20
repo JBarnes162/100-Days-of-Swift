@@ -9,7 +9,7 @@ import SwiftUI
 
 struct AstronautView: View {
     let astronaut: Astronaut
-    
+    var missionsFlown: [String]
     var body: some View {
         GeometryReader { geometry in
             ScrollView(.vertical) {
@@ -21,11 +21,34 @@ struct AstronautView: View {
                     
                     Text(self.astronaut.description)
                         .padding()
+                    
+                    ForEach(self.missionsFlown, id: \.self) { mission in
+                        VStack {
+                            Text(mission.description)
+                                .font(.headline)
+                        }
+                    }
                 }
             }
         }
         .navigationBarTitle(Text(astronaut.name), displayMode: .inline)
     }
+    init(astronaut: Astronaut) {
+            self.astronaut = astronaut
+            let missions: [Mission] = Bundle.main.decode("missions.json")
+
+            var matches = [String]()
+
+            for mission in missions {
+                for _ in mission.crew {
+                    if let match = mission.crew.first(where: {$0.name == astronaut.id}) {
+                        matches.append("Apollo \(mission.id) - \(match.role)")
+                        break
+                    }
+                }
+            }
+            self.missionsFlown = matches
+        }
 }
 
 struct AstronautView_Previews: PreviewProvider {
